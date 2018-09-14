@@ -8,6 +8,7 @@ import {
     requireNativeComponent,
     ViewPropTypes,
     StyleSheet,
+    PixelRatio,
 } from 'react-native'
 
 const resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource')
@@ -35,7 +36,30 @@ class FastImage extends Component {
             ...props
         } = this.props
 
-        const resolvedSource = resolveAssetSource(source)
+        const borderRadiusObject = style && style.borderRadius ? { borderRadius: Math.round(PixelRatio.getPixelSizeForLayoutSize(style.borderRadius)) } : {}
+        const resolvedSource = resolveAssetSource(source instanceof Object ? Object.assign(source, borderRadiusObject) : source)
+
+        if (!(source instanceof Object)) {
+            return (
+              <View
+                style={[style, styles.imageContainer]}
+                ref={this.captureRef}
+              >
+                  <Image
+                    {...props}
+                    style={{width: '100%', height: '100%'}}
+                    source={resolvedSource}
+                    resizeMode={Image.resizeMode.contain}
+                    onLoadStart={onLoadStart}
+                    onProgress={onProgress}
+                    onLoad={onLoad}
+                    onError={onError}
+                    onLoadEnd={onLoadEnd}
+                  />
+                {children}
+              </View>
+            )
+        }
 
         if (fallback) {
             return (

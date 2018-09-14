@@ -10,6 +10,8 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
 import com.facebook.react.bridge.NoSuchKeyException;
@@ -84,12 +86,22 @@ class FastImageViewConverter {
             case IMMUTABLE:
                 // Use defaults.
         }
-        return new RequestOptions()
-                .diskCacheStrategy(diskCacheStrategy)
-                .onlyRetrieveFromCache(onlyFromCache)
-                .skipMemoryCache(skipMemoryCache)
-                .priority(priority)
-                .placeholder(TRANSPARENT_DRAWABLE);
+        int borderRadius = 0;
+        try {
+            if (source.hasKey("borderRadius")) {
+                borderRadius = source.getInt("borderRadius");
+            }
+        } catch (NoSuchKeyException e) { }
+        RequestOptions options = new RequestOptions()
+                         .diskCacheStrategy(diskCacheStrategy)
+                         .onlyRetrieveFromCache(onlyFromCache)
+                         .skipMemoryCache(skipMemoryCache)
+                         .priority(priority)
+                         .placeholder(TRANSPARENT_DRAWABLE);
+        if (borderRadius > 0) {
+            options = options.transforms(new CenterCrop(), new RoundedCorners(borderRadius));
+        }
+        return options;
     }
 
     private static FastImageCacheControl getCacheControl(ReadableMap source) {
