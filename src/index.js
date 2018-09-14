@@ -37,7 +37,7 @@ class FastImage extends Component {
         } = this.props
 
         const borderRadiusObject = style && style.borderRadius ? { borderRadius: Math.round(PixelRatio.getPixelSizeForLayoutSize(style.borderRadius)) } : {}
-        const resolvedSource = resolveAssetSource(source instanceof Object ? Object.assign(source, borderRadiusObject) : source)
+        const resolvedSource = resolveAssetSource(source instanceof Object ? Object.assign({}, source, borderRadiusObject) : source)
 
         if (!(source instanceof Object)) {
             return (
