@@ -49,7 +49,7 @@ class FastImage extends Component {
                     {...props}
                     style={{width: '100%', height: '100%'}}
                     source={resolvedSource}
-                    resizeMode={Image.resizeMode.contain}
+                    resizeMode="contain"
                     onLoadStart={onLoadStart}
                     onProgress={onProgress}
                     onLoad={onLoad}
